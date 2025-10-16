@@ -45,8 +45,8 @@ const quadMat = new THREE.ShaderMaterial({
   vertexShader: vert,
   fragmentShader: frag,
   uniforms: {
-    uTime: { value: 0 },
-    uResolution: {
+    u_time: { value: 0 },
+    u_resolution: {
       value: new THREE.Vector2(window.innerWidth, window.innerHeight),
     },
   },
@@ -74,7 +74,7 @@ const clock = new THREE.Clock();
 
 function tick() {
   const t = clock.getElapsedTime();
-  quadMat.uniforms.uTime.value = t;
+  quadMat.uniforms.u_time.value = t;
 
   // controls.update();
   renderer.render(scene, camera);
