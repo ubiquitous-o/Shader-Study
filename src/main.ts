@@ -1,10 +1,10 @@
 // src/main.ts
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 // 分離した GLSL（前手順 4-1/4-2 で用意したもの）
-import frag from "./shaders/solid.frag?raw";
-import vert from "./shaders/passthrough.vert?raw";
+import frag from "./shaders/solid.frag.glsl?raw";
+import vert from "./shaders/passthrough.vert.glsl?raw";
 
 const canvas = document.getElementById("app") as HTMLCanvasElement;
 
@@ -31,10 +31,10 @@ const camera = new THREE.PerspectiveCamera(
 // フルスクリーンクアッドを見るだけなので、少し手前に引く
 camera.position.set(0, 0, 1);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.enableZoom = false; // 画面一杯のクアッドならズーム不要（好みで true）
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.enableDamping = true;
+// controls.enablePan = false;
+// controls.enableZoom = false; // 画面一杯のクアッドならズーム不要（好みで true）
 
 // ===== Fullscreen Quad (Plane) + ShaderMaterial =====
 // クリップ空間いっぱいに貼る 2x2 の平面（カメラで映す設計）
@@ -76,7 +76,7 @@ function tick() {
   const t = clock.getElapsedTime();
   quadMat.uniforms.uTime.value = t;
 
-  controls.update();
+  // controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
 }
