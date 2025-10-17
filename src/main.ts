@@ -19,9 +19,6 @@ const THUMBNAIL_SIZE =
   Number.isFinite(parsedSize) && parsedSize > 0 ? parsedSize : 512;
 let thumbnailReadySent = false;
 const assetBase = new URL(import.meta.env.BASE_URL ?? "/", window.location.origin);
-const SITE_NAME = "Shader Study";
-const DEFAULT_SHARE_DESCRIPTION =
-  "A learning playground for GLSL shaders rendered with Three.js.";
 
 function resolveAssetUrl(pathRef: string): string {
   const normalized = pathRef.startsWith("/")
@@ -34,51 +31,6 @@ type SelectShaderOptions = {
   updateHistory?: boolean;
   replaceHistory?: boolean;
 };
-
-function setMetaContent(attribute: "name" | "property", key: string, value: string) {
-  const selector = `meta[${attribute}="${key}"]`;
-  let element = document.head.querySelector(selector) as HTMLMetaElement | null;
-  if (!element) {
-    element = document.createElement("meta");
-    element.setAttribute(attribute, key);
-    document.head.appendChild(element);
-  }
-  element.setAttribute("content", value);
-}
-
-function updateShareMeta(definition: ShaderDefinition) {
-  if (isThumbnailMode) {
-    return;
-  }
-  const description = definition.description?.trim() ?? DEFAULT_SHARE_DESCRIPTION;
-  const pageTitle = `${definition.name} - ${SITE_NAME}`;
-  const pageUrl = new URL(window.location.origin);
-  const basePath = `${assetBase.pathname}`.replace(/\/+$/, "/");
-  pageUrl.pathname = basePath;
-  pageUrl.searchParams.set("shader", definition.id);
-  const thumbnailUrl = definition.thumbnail
-    ? resolveAssetUrl(definition.thumbnail)
-    : "";
-  const thumbnailAlt = `${definition.name} thumbnail`;
-
-  document.title = pageTitle;
-  const canonical = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-  if (canonical) {
-    canonical.href = pageUrl.toString();
-  }
-
-  setMetaContent("property", "og:title", pageTitle);
-  setMetaContent("property", "og:description", description);
-  setMetaContent("property", "og:url", pageUrl.toString());
-  setMetaContent("name", "twitter:title", pageTitle);
-  setMetaContent("name", "twitter:description", description);
-  setMetaContent("name", "twitter:card", "summary_large_image");
-  setMetaContent("property", "og:image", thumbnailUrl);
-  setMetaContent("property", "og:image:alt", thumbnailAlt);
-  setMetaContent("name", "twitter:image", thumbnailUrl);
-  setMetaContent("name", "twitter:image:alt", thumbnailAlt);
-
-}
 
 if (isThumbnailMode && document.body) {
   document.body.dataset.thumbnailMode = "true";
@@ -232,8 +184,6 @@ function selectShader(id: string, options: SelectShaderOptions = {}) {
       updateHistoryState(definition.id, replace);
     }
   }
-
-  updateShareMeta(definition);
 }
 
 function buildGallery(definitions: ShaderDefinition[]) {
