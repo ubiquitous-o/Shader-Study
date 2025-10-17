@@ -21,7 +21,7 @@ let thumbnailReadySent = false;
 const assetBase = new URL(import.meta.env.BASE_URL ?? "/", window.location.origin);
 const SITE_NAME = "Shader Study";
 const DEFAULT_SHARE_DESCRIPTION =
-  "Explore GLSL shader variations rendered in real time.";
+  "A learning playground for GLSL shaders rendered with Three.js.";
 
 function resolveAssetUrl(pathRef: string): string {
   const normalized = pathRef.startsWith("/")
@@ -52,7 +52,10 @@ function updateShareMeta(definition: ShaderDefinition) {
   }
   const description = definition.description?.trim() ?? DEFAULT_SHARE_DESCRIPTION;
   const pageTitle = `${definition.name} · ${SITE_NAME}`;
-  const pageUrl = new URL(window.location.href).toString();
+  const pageUrl = new URL(window.location.origin);
+  const basePath = `${assetBase.pathname}`.replace(/\/+$/, "/");
+  pageUrl.pathname = basePath;
+  pageUrl.searchParams.set("shader", definition.id);
   const thumbnailUrl = definition.thumbnail
     ? resolveAssetUrl(definition.thumbnail)
     : "";
@@ -61,21 +64,20 @@ function updateShareMeta(definition: ShaderDefinition) {
   document.title = pageTitle;
   const canonical = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
   if (canonical) {
-    canonical.href = pageUrl;
+    canonical.href = pageUrl.toString();
   }
 
   setMetaContent("property", "og:title", pageTitle);
   setMetaContent("property", "og:description", description);
-  setMetaContent("property", "og:url", pageUrl);
+  setMetaContent("property", "og:url", pageUrl.toString());
   setMetaContent("name", "twitter:title", pageTitle);
   setMetaContent("name", "twitter:description", description);
   setMetaContent("name", "twitter:card", "summary_large_image");
-  if (thumbnailUrl) {
-    setMetaContent("property", "og:image", thumbnailUrl);
-    setMetaContent("property", "og:image:alt", thumbnailAlt);
-    setMetaContent("name", "twitter:image", thumbnailUrl);
-    setMetaContent("name", "twitter:image:alt", thumbnailAlt);
-  }
+  setMetaContent("property", "og:image", thumbnailUrl);
+  setMetaContent("property", "og:image:alt", thumbnailAlt);
+  setMetaContent("name", "twitter:image", thumbnailUrl);
+  setMetaContent("name", "twitter:image:alt", thumbnailAlt);
+
 }
 
 if (isThumbnailMode && document.body) {
