@@ -237,7 +237,7 @@ function resolveScreenshotPath(thumbnailPath: string): string {
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   await ensureBuildArtifacts();
-  await mkdir(thumbnailsDir, { recursive: true });
+  await ensureOutputDirectories();
 
   const entries = options.only
     ? shaderRegistry.filter((entry) => options.only!.has(entry.id))
@@ -322,6 +322,7 @@ async function main(): Promise<void> {
         path: outputPath,
         type: "png",
       });
+      await writeSharePage(entry, thumbnailPath);
       console.log(`[done] ${entry.id} -> ${thumbnailPath}`);
     }
   } finally {
