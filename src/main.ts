@@ -51,7 +51,7 @@ function updateShareMeta(definition: ShaderDefinition) {
     return;
   }
   const description = definition.description?.trim() ?? DEFAULT_SHARE_DESCRIPTION;
-  const pageTitle = `${definition.name} · ${SITE_NAME}`;
+  const pageTitle = `${definition.name} - ${SITE_NAME}`;
   const pageUrl = new URL(window.location.origin);
   const basePath = `${assetBase.pathname}`.replace(/\/+$/, "/");
   pageUrl.pathname = basePath;
