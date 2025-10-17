@@ -1,7 +1,7 @@
 # shader-study
 
 Learning playground that showcases GLSL fragment shaders with Three.js.  
-[https://ubiquitous-o.github.io/shader-study](https://ubiquitous-o.github.io/shader-study)
+[https://ubiquitous-o.github.io/Shader-Study](https://ubiquitous-o.github.io/Shader-Study)
 
 ## Local Development
 
