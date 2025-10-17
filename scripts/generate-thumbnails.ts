@@ -172,15 +172,21 @@ async function handleRequest(rawPath: string, res: import("node:http").ServerRes
 }
 
 async function resolveFilePath(pathname: string): Promise<string | null> {
-  if (pathname === "/" || pathname === "/index.html") {
+  if (
+    pathname === "/" ||
+    pathname === "/index.html" ||
+    pathname === BASE_PATH ||
+    pathname === `${BASE_PATH}index.html`
+  ) {
     return path.join(distDir, "index.html");
   }
 
-  if (!pathname.startsWith(BASE_PATH)) {
-    return null;
+  let relativePath: string;
+  if (pathname.startsWith(BASE_PATH)) {
+    relativePath = pathname.slice(BASE_PATH.length);
+  } else {
+    relativePath = pathname.replace(/^\//, "");
   }
-
-  let relativePath = pathname.slice(BASE_PATH.length);
   if (!relativePath || relativePath === "/") {
     relativePath = "index.html";
   }

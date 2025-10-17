@@ -18,6 +18,14 @@ const parsedSize = sizeParam ? Number.parseInt(sizeParam, 10) : Number.NaN;
 const THUMBNAIL_SIZE =
   Number.isFinite(parsedSize) && parsedSize > 0 ? parsedSize : 512;
 let thumbnailReadySent = false;
+const assetBase = new URL(import.meta.env.BASE_URL ?? "/", window.location.origin);
+
+function resolveAssetUrl(pathRef: string): string {
+  const normalized = pathRef.startsWith("/")
+    ? pathRef.slice(1)
+    : pathRef;
+  return new URL(normalized, assetBase).toString();
+}
 
 if (isThumbnailMode && document.body) {
   document.body.dataset.thumbnailMode = "true";
@@ -182,7 +190,7 @@ function buildGallery(definitions: ShaderDefinition[]) {
   fullscreenAction.setAttribute("aria-label", "Enter fullscreen");
   fullscreenAction.title = "Enter fullscreen";
   const fullscreenIcon = document.createElement("img");
-  fullscreenIcon.src = "/icons/fullscreen.svg";
+  fullscreenIcon.src = resolveAssetUrl("/icons/fullscreen.svg");
   fullscreenIcon.alt = "";
   fullscreenIcon.className = "shader-fullscreen-toggle__icon";
   fullscreenAction.appendChild(fullscreenIcon);
@@ -206,9 +214,9 @@ function buildGallery(definitions: ShaderDefinition[]) {
     button.className = "shader-strip__item";
     button.dataset.shaderId = definition.id;
 
-    if (definition.thumbnail) {
-      const image = document.createElement("img");
-      image.src = definition.thumbnail;
+  if (definition.thumbnail) {
+    const image = document.createElement("img");
+    image.src = resolveAssetUrl(definition.thumbnail);
       image.alt = `${definition.name} preview`;
       image.className = "shader-strip__thumbnail";
       button.appendChild(image);
