@@ -9,6 +9,6 @@ varying vec2  v_texcoord;
 void main(){
   vec2 uv = v_texcoord;
   float t = u_time * 0.2;
-  vec3 col = 0.5 + 0.5 * cos(4.0 * vec3(uv.x + t, uv.y, uv.x - t));
+  vec3 col = 0.5 + 0.4 * cos(3.5 * vec3(uv.y + t, uv.y * 1.2, uv.x - t * 1.2));
   gl_FragColor = vec4(col, 1.0);
 }
