@@ -13,7 +13,7 @@ import { shaderRegistry } from "../src/shaders/registry";
 const DEFAULT_THUMBNAIL_SIZE = 512;
 const DEFAULT_DELAY_MS = 250;
 const DEFAULT_TIMEOUT_MS = 10000;
-const BASE_PATH = "/shader-study/";
+const BASE_PATH = "/Shader-Study/";
 
 interface CliOptions {
   force: boolean;
