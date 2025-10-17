@@ -1,8 +1,9 @@
 declare module "*.glsl" {
-    const src: string;
-    export default src;
+  const value: string;
+  export default value;
 }
+
 declare module "*?raw" {
-  const src: string;
-  export default src;
+  const value: string;
+  export default value;
 }

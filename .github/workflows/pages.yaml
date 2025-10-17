@@ -29,7 +29,16 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Build
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Initial build
+        run: npm run build
+
+      - name: Generate thumbnails
+        run: npm run generate:thumbnails -- --force
+
+      - name: Rebuild with thumbnails
         run: npm run build
 
       - name: Upload artifact
