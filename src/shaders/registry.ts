@@ -57,4 +57,34 @@ export const shaderRegistry: ShaderRegistryEntry[] = [
       }
     },
   },
+  {
+    id: "swirl-waves",
+    name: "Swirl Waves",
+    description: "Swirling polar waves with neon glow bands",
+    thumbnail: "/thumbnails/swirl-waves.png",
+    vertexPath: "./passthrough.vert.glsl",
+    fragmentPath: "./swirl-waves.frag.glsl",
+    createUniforms: () => ({
+      u_time: { value: 0 },
+      u_resolution: { value: new THREE.Vector2(1, 1) },
+    }),
+    update: ({ uniforms, elapsedTime }) => {
+      const uTime = uniforms.u_time as THREE.IUniform<number> | undefined;
+      if (uTime) {
+        uTime.value = elapsedTime;
+      }
+    },
+    onResize: ({ uniforms, size }) => {
+      const uResolution =
+        uniforms.u_resolution as THREE.IUniform<THREE.Vector2> | undefined;
+      if (!uResolution) {
+        return;
+      }
+      if (uResolution.value instanceof THREE.Vector2) {
+        uResolution.value.copy(size);
+      } else {
+        uResolution.value = size.clone();
+      }
+    },
+  },
 ];

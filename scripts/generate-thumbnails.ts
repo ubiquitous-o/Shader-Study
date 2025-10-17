@@ -117,6 +117,10 @@ async function ensureBuildArtifacts(): Promise<void> {
   }
 }
 
+async function ensureOutputDirectories(): Promise<void> {
+  await mkdir(thumbnailsDir, { recursive: true });
+}
+
 async function createStaticServer(): Promise<StaticServer> {
   const server = createServer((req, res) => {
     void handleRequest(req.url ?? "/", res).catch((error) => {
@@ -322,8 +326,6 @@ async function main(): Promise<void> {
         path: outputPath,
         type: "png",
       });
-      await writeSharePage(entry, thumbnailPath);
-      console.log(`[done] ${entry.id} -> ${thumbnailPath}`);
     }
   } finally {
     await browser.close();
