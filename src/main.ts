@@ -27,6 +27,11 @@ function resolveAssetUrl(pathRef: string): string {
   return new URL(normalized, assetBase).toString();
 }
 
+type SelectShaderOptions = {
+  updateHistory?: boolean;
+  replaceHistory?: boolean;
+};
+
 if (isThumbnailMode && document.body) {
   document.body.dataset.thumbnailMode = "true";
   document.body.dataset.thumbnailReady = "pending";
@@ -145,13 +150,40 @@ function applyShader(definition: ShaderDefinition) {
   }
 }
 
-function selectShader(id: string) {
-  const definition = findShaderById(id);
-  if (!definition || currentShader?.id === definition.id) {
+function updateHistoryState(shaderId: string, replace: boolean) {
+  if (isThumbnailMode) {
     return;
   }
-  applyShader(definition);
+  const url = new URL(window.location.href);
+  url.searchParams.set("shader", shaderId);
+  const state = { shader: shaderId };
+  if (replace) {
+    window.history.replaceState(state, "", url);
+  } else {
+    window.history.pushState(state, "", url);
+  }
+}
+
+function selectShader(id: string, options: SelectShaderOptions = {}) {
+  const definition = findShaderById(id);
+  if (!definition) {
+    return;
+  }
+  if (currentShader?.id !== definition.id) {
+    applyShader(definition);
+  }
   highlightActive(definition.id);
+
+  const shouldUpdateHistory = options.updateHistory ?? !isThumbnailMode;
+  if (shouldUpdateHistory) {
+    const replace = options.replaceHistory === true;
+    const currentState = (window.history.state ?? null) as
+      | { shader?: string }
+      | null;
+    if (replace || currentState?.shader !== definition.id) {
+      updateHistoryState(definition.id, replace);
+    }
+  }
 }
 
 function buildGallery(definitions: ShaderDefinition[]) {
@@ -338,17 +370,25 @@ if (!initialShader) {
 if (isThumbnailMode) {
   viewport.set(THUMBNAIL_SIZE, THUMBNAIL_SIZE);
   renderer.setSize(viewport.x, viewport.y, true);
-  applyShader(initialShader);
+  selectShader(initialShader.id, { updateHistory: false });
   renderer.render(scene, camera);
   notifyThumbnailReady();
   requestAnimationFrame(tick);
 } else {
   buildGallery(shaderCatalog);
-  applyShader(initialShader);
-  highlightActive(initialShader.id);
+  selectShader(initialShader.id, { replaceHistory: true });
 
   window.addEventListener("resize", onResize);
   window.addEventListener("fullscreenchange", updateFullscreenButtonState);
+  window.addEventListener("popstate", () => {
+    const params = new URLSearchParams(window.location.search);
+    const shaderId = params.get("shader");
+    if (shaderId) {
+      selectShader(shaderId, { updateHistory: false });
+    } else if (shaderCatalog[0]) {
+      selectShader(shaderCatalog[0].id, { updateHistory: false });
+    }
+  });
   onResize();
   updateFullscreenButtonState();
   updateStripVisibility();
